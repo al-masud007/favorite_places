@@ -1,4 +1,4 @@
-import 'package:favorite_places/Screens/places_screen.dart';
+import 'package:favorite_places/Screens/places.dart';
 import 'package:flutter/material.dart';
 
 final colorScheme = ColorScheme.fromSeed(
