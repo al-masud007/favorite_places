@@ -1,3 +1,4 @@
+import 'package:favorite_places/Providers/user_places.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,9 +17,7 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
     if (enteredTitle.isEmpty) {
       return;
     }
-    // Here you would typically save the new place to your state management solution
-    // For example, using Riverpod, you might call a notifier to add the place
-    // ref.read(placesProvider.notifier).addPlace(enteredTitle);
+    ref.read(userPlacesProvider.notifier).addPlace(enteredTitle);
     Navigator.of(context).pop();
   }
 
