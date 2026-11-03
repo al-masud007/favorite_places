@@ -1,6 +1,7 @@
 import 'package:favorite_places/Screens/places.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -8,12 +9,22 @@ final colorScheme = ColorScheme.fromSeed(
   surface: Color.fromARGB(255, 56, 50, 70),
 );
 
-ThemeData theme = ThemeData(
+final theme = ThemeData().copyWith(
   colorScheme: colorScheme,
-  useMaterial3: true,
-  appBarTheme: AppBarTheme(
-    backgroundColor: colorScheme.onPrimaryContainer,
-    foregroundColor: colorScheme.primaryContainer,
+  scaffoldBackgroundColor: colorScheme.surface,
+  textTheme: GoogleFonts.ubuntuCondensedTextTheme().copyWith(
+    bodyMedium: GoogleFonts.ubuntuCondensed(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+    ),
+    bodyLarge: GoogleFonts.ubuntuCondensed(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+    ),
+    bodySmall: GoogleFonts.ubuntuCondensed(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+    ),
   ),
 );
 
