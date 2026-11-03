@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AddPlaceScreen extends StatelessWidget {
+class AddPlaceScreen extends StatefulWidget {
   const AddPlaceScreen({super.key});
+
+  @override
+  State<AddPlaceScreen> createState() => _AddPlaceScreenState();
+}
+
+class _AddPlaceScreenState extends State<AddPlaceScreen> {
+  final _titleController = TextEditingController();
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,28 +23,18 @@ class AddPlaceScreen extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(labelText: 'Title'),
-                  ),
-                ),
-              ],
+            TextField(
+              decoration: const InputDecoration(labelText: 'Title'),
+              controller: _titleController,
             ),
             SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Save the new place
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Place'),
-                ),
-              ],
+            ElevatedButton.icon(
+              onPressed: () {
+                // Save the new place
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add Place'),
             ),
           ],
         ),
