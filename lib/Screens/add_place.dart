@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddPlaceScreen extends StatefulWidget {
+class AddPlaceScreen extends ConsumerStatefulWidget {
   const AddPlaceScreen({super.key});
 
   @override
-  State<AddPlaceScreen> createState() => _AddPlaceScreenState();
+  ConsumerState<AddPlaceScreen> createState() => _AddPlaceScreenState();
 }
 
-class _AddPlaceScreenState extends State<AddPlaceScreen> {
+class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final _titleController = TextEditingController();
+
+  void _savePlace() {
+    final enteredTitle = _titleController.text;
+    if (enteredTitle.isEmpty) {
+      return;
+    }
+    // Here you would typically save the new place to your state management solution
+    // For example, using Riverpod, you might call a notifier to add the place
+    // ref.read(placesProvider.notifier).addPlace(enteredTitle);
+    Navigator.of(context).pop();
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -31,7 +44,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
             ElevatedButton.icon(
               onPressed: () {
                 // Save the new place
-                Navigator.of(context).pop();
+                _savePlace();
               },
               icon: const Icon(Icons.add),
               label: const Text('Add Place'),
