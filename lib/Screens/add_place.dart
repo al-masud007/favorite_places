@@ -16,6 +16,14 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   void _savePlace() {
     final enteredTitle = _titleController.text;
     if (enteredTitle.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please enter a title for the place.',
+            style: TextStyle(color: Colors.redAccent),
+          ),
+        ),
+      );
       return;
     }
     ref.read(userPlacesProvider.notifier).addPlace(enteredTitle);

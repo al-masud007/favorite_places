@@ -1,4 +1,3 @@
-import 'package:favorite_places/main.dart';
 import 'package:flutter/material.dart';
 
 class ImageInput extends StatefulWidget {
@@ -9,6 +8,7 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
+  void _addPicture() {}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,11 +17,11 @@ class _ImageInputState extends State<ImageInput> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1,
-          color: colorScheme.primary.withValues(alpha: 0.5),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
         ),
       ),
       child: TextButton.icon(
-        onPressed: () {},
+        onPressed: _addPicture,
         icon: const Icon(Icons.camera),
         label: const Text('Add Picture'),
       ),
