@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:location/location.dart'
     show Location, LocationData, PermissionStatus;
 
@@ -40,10 +43,18 @@ class _LocationInputState extends State<LocationInput> {
     });
 
     locationData = await location.getLocation();
+    final lat = locationData.latitude;
+    final lng = locationData.longitude;
 
-    print(
-      'Location: Latitude: ${locationData.latitude}, Longitude: ${locationData.longitude}',
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyBoUDojPBHQ1rLCBbJe-w-T4V_zMCJJKRI',
     );
+    final response = await http.get(url);
+    final resData = json.decode(response.body);
+    if (resData['status'] == 'OK') {
+      final address = resData['results'][0]['formatted_address'];
+      // Do something with the address, e.g., display it or save it
+    }
 
     setState(() {
       _isGettingLocation = false;
