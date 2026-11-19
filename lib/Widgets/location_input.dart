@@ -17,6 +17,15 @@ class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
   var _isGettingLocation = false;
 
+  String get locationImageUrl {
+    if (_pickedLocation == null) {
+      return '';
+    }
+    final lat = _pickedLocation!.latitude;
+    final lng = _pickedLocation!.longitude;
+    return ' https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:blue%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyD-6G35IuDst2RpHNze6W7I05qvOQBIXyY&signature=YOUR_SIGNATURE';
+  }
+
   void _getCurrentLocation() async {
     Location location = Location();
 
@@ -48,22 +57,18 @@ class _LocationInputState extends State<LocationInput> {
     final lng = locationData.longitude;
 
     final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyBoUDojPBHQ1rLCBbJe-w-T4V_zMCJJKRI',
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyD-6G35IuDst2RpHNze6W7I05qvOQBIXyY',
     );
     final response = await http.get(url);
+
     final resData = json.decode(response.body);
-    if (resData['status'] == 'OK') {
-      final address = resData['results'][0]['formatted_address'];
-      // Do something with the address, e.g., display it or save it
-    }
+    final address = resData['results'][0]['formatted_address'];
 
     setState(() {
       _pickedLocation = PlaceLocation(
         latitude: lat,
         longitude: lng,
-        address: resData['status'] == 'OK'
-            ? resData['results'][0]['formatted_address']
-            : 'Unknown location',
+        address: address,
       );
       _isGettingLocation = false;
     });
@@ -78,6 +83,13 @@ class _LocationInputState extends State<LocationInput> {
       ),
       textAlign: TextAlign.center,
     );
+    if (_pickedLocation != null) {
+      previewContent = Image.network(
+        locationImageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+      );
+    }
 
     if (_isGettingLocation) {
       previewContent = const CircularProgressIndicator();
