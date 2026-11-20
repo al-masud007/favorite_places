@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:favorite_places/Models/place.dart';
+import 'package:favorite_places/Screens/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart'
     show Location, LocationData, PermissionStatus;
@@ -22,6 +21,28 @@ class _LocationInputState extends State<LocationInput> {
   final MapController _previewMapController = MapController();
 
   static const String _userAgent = 'com.favoriteplaces.app';
+
+  void _saveLocation(double lat, double lng) {
+    final formatedAddress =
+        'lat": ${lat.toStringAsFixed(5)}, "lng": ${lng.toStringAsFixed(5)}';
+
+    final newLocation = PlaceLocation(
+      latitude: lat,
+      longitude: lng,
+      address: formatedAddress,
+    );
+    setState(() {
+      _pickedLocation = newLocation;
+      _isGettingLocation = false;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _previewMapController.move(LatLng(lat, lng), 15);
+      }
+    });
+    widget.onSelectLocation?.call(newLocation);
+  }
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -53,25 +74,25 @@ class _LocationInputState extends State<LocationInput> {
     final lat = locationData.latitude;
     final lng = locationData.longitude;
 
-    final formatedAddress =
-        'lat": ${lat.toStringAsFixed(5)}, "lng": ${lng.toStringAsFixed(5)}';
+    _saveLocation(lat, lng);
+  }
 
-    final newLocation = PlaceLocation(
-      latitude: lat,
-      longitude: lng,
-      address: formatedAddress,
+  Future<void> _onSelectOnMap() async {
+    // Implement the logic to select a location on the map
+    final pickedPoint = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        builder: (ctx) => MapScreen(
+          location:
+              _pickedLocation ??
+              PlaceLocation(latitude: 37.422, longitude: -122.084, address: ''),
+        ),
+      ),
     );
-    setState(() {
-      _pickedLocation = newLocation;
-      _isGettingLocation = false;
-    });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _previewMapController.move(LatLng(lat, lng), 15);
-      }
-    });
-    widget.onSelectLocation?.call(newLocation);
+    if (pickedPoint == null) {
+      return;
+    }
+    (pickedPoint.latitude, pickedPoint.longitude);
   }
 
   @override
@@ -150,7 +171,7 @@ class _LocationInputState extends State<LocationInput> {
               label: const Text('Current Location'),
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: _onSelectOnMap,
               icon: const Icon(Icons.map),
               label: const Text('Select on Map'),
             ),

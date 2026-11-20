@@ -46,7 +46,7 @@ class _MapScreenState extends State<MapScreen> {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://title.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.favoriteplaces.app',
           ),
           MarkerLayer(
@@ -57,7 +57,7 @@ class _MapScreenState extends State<MapScreen> {
                 width: 40,
                 child: Icon(
                   Icons.location_pin,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Color(Colors.red.withValues(alpha: 0.8).toARGB32()),
                   size: 40,
                 ),
               ),
