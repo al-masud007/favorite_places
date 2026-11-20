@@ -15,12 +15,14 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   LatLng? _pickedLocation;
+
   @override
   Widget build(BuildContext context) {
     final initialPoint = LatLng(
       widget.location.latitude,
       widget.location.longitude,
     );
+    final activePoint = _pickedLocation ?? initialPoint;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.isSelecting ? 'Pick Location' : 'Your Location'),
@@ -39,10 +41,10 @@ class _MapScreenState extends State<MapScreen> {
           initialZoom: 16,
           initialCenter: initialPoint,
           onTap: widget.isSelecting
-              ? null
-              : (tapPosition, point) => setState(() {
+              ? (tapPosition, point) => setState(() {
                   _pickedLocation = point;
-                }),
+                })
+              : null,
         ),
         children: [
           TileLayer(
@@ -52,7 +54,8 @@ class _MapScreenState extends State<MapScreen> {
           MarkerLayer(
             markers: [
               Marker(
-                point: _pickedLocation ?? initialPoint,
+                // point: _pickedLocation ?? initialPoint,
+                point: activePoint,
                 height: 40,
                 width: 40,
                 child: Icon(

@@ -92,7 +92,7 @@ class _LocationInputState extends State<LocationInput> {
     if (pickedPoint == null) {
       return;
     }
-    (pickedPoint.latitude, pickedPoint.longitude);
+    _saveLocation(pickedPoint.latitude, pickedPoint.longitude);
   }
 
   @override
