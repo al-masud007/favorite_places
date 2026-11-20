@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:favorite_places/Models/place.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart'
     show Location, LocationData, PermissionStatus;
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({super.key});
+  const LocationInput({super.key, this.onSelectLocation});
+  final void Function(PlaceLocation location)? onSelectLocation;
 
   @override
   State<LocationInput> createState() => _LocationInputState();
@@ -16,15 +19,9 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
   var _isGettingLocation = false;
+  final MapController _previewMapController = MapController();
 
-  String get locationImageUrl {
-    if (_pickedLocation == null) {
-      return '';
-    }
-    final lat = _pickedLocation!.latitude;
-    final lng = _pickedLocation!.longitude;
-    return ' https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:blue%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyD-6G35IuDst2RpHNze6W7I05qvOQBIXyY&signature=YOUR_SIGNATURE';
-  }
+  static const String _userAgent = 'com.favoriteplaces.app';
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -56,22 +53,25 @@ class _LocationInputState extends State<LocationInput> {
     final lat = locationData.latitude;
     final lng = locationData.longitude;
 
-    final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyD-6G35IuDst2RpHNze6W7I05qvOQBIXyY',
+    final formatedAddress =
+        'lat": ${lat.toStringAsFixed(5)}, "lng": ${lng.toStringAsFixed(5)}';
+
+    final newLocation = PlaceLocation(
+      latitude: lat,
+      longitude: lng,
+      address: formatedAddress,
     );
-    final response = await http.get(url);
-
-    final resData = json.decode(response.body);
-    final address = resData['results'][0]['formatted_address'];
-
     setState(() {
-      _pickedLocation = PlaceLocation(
-        latitude: lat,
-        longitude: lng,
-        address: address,
-      );
+      _pickedLocation = newLocation;
       _isGettingLocation = false;
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _previewMapController.move(LatLng(lat, lng), 15);
+      }
+    });
+    widget.onSelectLocation?.call(newLocation);
   }
 
   @override
@@ -83,11 +83,40 @@ class _LocationInputState extends State<LocationInput> {
       ),
       textAlign: TextAlign.center,
     );
+
     if (_pickedLocation != null) {
-      previewContent = Image.network(
-        locationImageUrl,
-        fit: BoxFit.cover,
-        width: double.infinity,
+      final point = LatLng(
+        _pickedLocation!.latitude,
+        _pickedLocation!.longitude,
+      );
+      previewContent = FlutterMap(
+        mapController: _previewMapController,
+        // key: ValueKey('${point.latitude}_${point.longitude}'),
+        options: MapOptions(
+          initialZoom: 15,
+          initialCenter: point,
+          interactionOptions: InteractionOptions(flags: InteractiveFlag.none),
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: _userAgent,
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: point,
+                height: 40,
+                width: 40,
+                child: Icon(
+                  Icons.location_pin,
+                  color: Color(Colors.red.withValues(alpha: 0.8).toARGB32()),
+                  size: 40,
+                ),
+              ),
+            ],
+          ),
+        ],
       );
     }
 
