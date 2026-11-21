@@ -54,35 +54,39 @@ class PlaceDetailsScreen extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 70,
                       child: ClipOval(
-                        child: FlutterMap(
-                          options: MapOptions(
-                            initialCenter: point,
-                            initialZoom: 15,
-                            interactionOptions: const InteractionOptions(
-                              flags: InteractiveFlag.none,
+                        child: IgnorePointer(
+                          // IgnorePointer stops FlutterMap consuming taps
+                          // so GestureDetector above fires correctly
+                          child: FlutterMap(
+                            options: MapOptions(
+                              initialCenter: point,
+                              initialZoom: 15,
+                              interactionOptions: const InteractionOptions(
+                                flags: InteractiveFlag.none,
+                              ),
                             ),
-                          ),
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              userAgentPackageName: 'com.favoriteplaces.app',
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                Marker(
-                                  point: point,
-                                  width: 36,
-                                  height: 36,
-                                  child: const Icon(
-                                    Icons.location_pin,
-                                    color: Colors.red,
-                                    size: 36,
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName: 'com.favoriteplaces.app',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: point,
+                                    width: 36,
+                                    height: 36,
+                                    child: const Icon(
+                                      Icons.location_pin,
+                                      color: Colors.red,
+                                      size: 36,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
