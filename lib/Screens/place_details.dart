@@ -55,8 +55,6 @@ class PlaceDetailsScreen extends StatelessWidget {
                       radius: 70,
                       child: ClipOval(
                         child: IgnorePointer(
-                          // IgnorePointer stops FlutterMap consuming taps
-                          // so GestureDetector above fires correctly
                           child: FlutterMap(
                             options: MapOptions(
                               initialCenter: point,

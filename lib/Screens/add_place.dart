@@ -73,34 +73,36 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
       appBar: AppBar(title: const Text('Add a New Place')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Title'),
-              controller: _titleController,
-            ),
-            SizedBox(height: 10),
-            ImageInput(
-              onPickImage: (image) {
-                _selectedImage = image;
-              },
-            ),
-            SizedBox(height: 10),
-            LocationInput(
-              onSelectLocation: (location) {
-                _selectedLocation = location;
-              },
-            ),
-            SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Save the new place
-                _savePlace();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Place'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Title'),
+                controller: _titleController,
+              ),
+              SizedBox(height: 10),
+              ImageInput(
+                onPickImage: (image) {
+                  _selectedImage = image;
+                },
+              ),
+              SizedBox(height: 10),
+              LocationInput(
+                onSelectLocation: (location) {
+                  _selectedLocation = location;
+                },
+              ),
+              SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Save the new place
+                  _savePlace();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Add Place'),
+              ),
+            ],
+          ),
         ),
       ),
     );
