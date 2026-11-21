@@ -14,6 +14,14 @@ Photos are moved out of the temporary cache into the app's permanent document di
 
 ---
 
+## Screenshots
+
+| Add Place (Photo & Map Preview) | Map Location Picker | Place Details (Mini-Map & Address) |
+|:---:|:---:|:---:|
+| <img src="screenshots/add_place_screen.jpg" width="260" alt="Add Place Screen" /> | <img src="screenshots/map_picker.jpg" width="260" alt="Map Picker Screen" /> | <img src="screenshots/place_details.jpg" width="260" alt="Place Details Screen" /> |
+
+---
+
 ## Screens
 
 **Your Places (`places.dart`)** — the main screen (`ConsumerStatefulWidget`). On startup, a `FutureBuilder` loads saved places from the SQLite database while showing a loading spinner. Each entry in the list displays a photo thumbnail, place title, and formatted address. Tapping the `+` button in the app bar opens the add screen.
