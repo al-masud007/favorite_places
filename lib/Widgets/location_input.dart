@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:favorite_places/Models/place.dart';
 import 'package:favorite_places/Screens/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart'
     show Location, LocationData, PermissionStatus;
@@ -22,14 +24,31 @@ class _LocationInputState extends State<LocationInput> {
 
   static const String _userAgent = 'com.favoriteplaces.app';
 
-  void _saveLocation(double lat, double lng) {
-    final formatedAddress =
-        'lat": ${lat.toStringAsFixed(5)}, "lng": ${lng.toStringAsFixed(5)}';
+  Future<void> _saveLocation(double lat, double lng) async {
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    String formattedAddress =
+        '${lat.toStringAsFixed(5)}, ${lng.toStringAsFixed(5)}';
+
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lng',
+      );
+      final response = await http.get(url, headers: {'User-Agent': _userAgent});
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['display_name'] != null) {
+          formattedAddress = data['display_name'] as String;
+        }
+      }
+    } catch (_) {}
 
     final newLocation = PlaceLocation(
       latitude: lat,
       longitude: lng,
-      address: formatedAddress,
+      address: formattedAddress,
     );
     setState(() {
       _pickedLocation = newLocation;
