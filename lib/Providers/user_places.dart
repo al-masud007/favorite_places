@@ -5,7 +5,6 @@ import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:favorite_places/Models/place.dart';
 import 'package:sqflite/sqflite.dart' as sql;
-import 'package:sqflite/sqlite_api.dart';
 
 Future<sql.Database> _getdatabase() async {
   final dbPath = await sql.getDatabasesPath();
@@ -25,7 +24,7 @@ class UserPlacesNotifier extends Notifier<List<Place>> {
   @override
   List<Place> build() => [];
 
-  void loadplaces() async {
+  Future<void> loadplaces() async {
     final db = await _getdatabase();
     final data = await db.query('user_places');
     final places = data.map((row) {
