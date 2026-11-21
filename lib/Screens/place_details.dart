@@ -19,12 +19,12 @@ class PlaceDetailsScreen extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
           ),
-          Center(
-            child: Text(
-              'Place Details will be shown here.',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          // Center(
+          //   child: Text(
+          //     'Place Details will be shown here.',
+          //     style: Theme.of(context).textTheme.titleMedium,
+          //   ),
+          // ),
         ],
       ),
     );
