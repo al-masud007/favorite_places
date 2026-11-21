@@ -1,29 +1,35 @@
 # Favorite Places
 
-A Flutter app to save the places that matter to you — with a photo and the exact location, all in one spot.
+A Flutter app to save the places you visit — photo, pinpoint location, and human-readable address all stored locally.
 
 ---
 
 ## What it does
 
-You can add any place by giving it a name, snapping a photo with your camera, and pinning its location either through your device's GPS or by tapping directly on a map. Every saved place shows up in your list with a thumbnail and the coordinates. Tap a place to see the full image.
+Add any place by giving it a name, taking a picture with your camera, and pinning its location. You can grab your current GPS coordinates or pick a spot manually on an interactive map.
+
+When a location is picked, the app reverse-geocodes the coordinates through OpenStreetMap's Nominatim service so you get an actual readable address, not just raw latitude and longitude.
+
+Photos are copied out of the temporary cache into the app's document storage, and place data is saved into a local SQLite database (`places.db`).
 
 ---
 
 ## Screens
 
-**Your Places** — the home screen. Lists all your saved places. Empty state shows a message until you add something. The `+` button in the top-right takes you to the add screen.
+**Your Places** — the home screen. Shows your saved places in a list with image thumbnails, place names, and resolved street addresses. Tapping the `+` button in the app bar opens the add screen.
 
-**Add a New Place** — a form with three inputs:
-- a title field
-- a camera capture widget (tap to retake the photo)
-- a location picker with two options: grab your current GPS position, or open a full map and tap to choose manually
+**Add a New Place** — a form with three required inputs:
+- Title field
+- Camera photo picker (tap the preview anytime to retake)
+- Location input with two buttons: **Current Location** (GPS) and **Select on Map** (manual map picker), plus an inline mini-map preview
 
-All three fields are required before saving. Missing any one of them shows a snackbar warning.
+All fields must be filled before saving; otherwise, a snackbar prompts what's missing.
 
-**Map (pick mode)** — an interactive OpenStreetMap view. Tap anywhere to drop a marker. Hit the save icon in the app bar to confirm the picked coordinates and return to the add screen.
+**Map Screen** — full-screen OpenStreetMap view powered by `flutter_map`.
+- **Pick mode (`isSelecting: true`):** tap anywhere on the map to move the marker, then hit the save icon in the app bar to confirm.
+- **View mode (`isSelecting: false`):** read-only view centered on an already saved place.
 
-**Place Details** — full-screen image of the saved place.
+**Place Details** — shows the saved photo full-screen. At the bottom, there is an overlay with a circular map snapshot centered on the place's coordinates. Tapping the circle opens the full interactive map view, and the full address is listed right below.
 
 ---
 
@@ -32,13 +38,14 @@ All three fields are required before saving. Missing any one of them shows a sna
 | What | Package |
 |---|---|
 | State management | `flutter_riverpod` |
-| Maps | `flutter_map` + `latlong2` |
-| Map tiles | OpenStreetMap (no API key needed) |
-| Device location | `location` + `geolocator` |
-| Camera / gallery | `image_picker` |
+| Local database | `sqflite` |
+| File paths & app storage | `path` + `path_provider` |
+| Maps & tiles | `flutter_map` + `latlong2` (OpenStreetMap tiles) |
+| Reverse geocoding | `http` (Nominatim OpenStreetMap API) |
+| Device GPS | `location` + `geolocator` |
+| Camera capture | `image_picker` |
 | Fonts | `google_fonts` (Ubuntu Condensed + Lato) |
 | Unique IDs | `uuid` |
-| HTTP | `http` |
 
 ---
 
@@ -46,42 +53,42 @@ All three fields are required before saving. Missing any one of them shows a sna
 
 ```
 lib/
-├── main.dart               # app entry, theme setup
+├── main.dart               # entry point, dark purple theme definition
 ├── Models/
-│   └── place.dart          # Place and PlaceLocation data classes
+│   └── place.dart          # Place and PlaceLocation models
 ├── Providers/
-│   └── user_places.dart    # Riverpod notifier, holds the places list in memory
+│   └── user_places.dart    # Riverpod notifier with SQLite persistence and file copying
 ├── Screens/
-│   ├── places.dart         # home screen
-│   ├── add_place.dart      # add new place form
-│   ├── place_details.dart  # full image view
-│   └── map.dart            # interactive map (pick or view mode)
+│   ├── places.dart         # main list screen
+│   ├── add_place.dart      # add place form
+│   ├── place_details.dart  # full photo view with circular map preview
+│   └── map.dart            # interactive OpenStreetMap (pick or view)
 └── Widgets/
-    ├── image_input.dart    # camera capture widget
-    ├── location_input.dart # GPS + map picker widget with inline preview map
-    └── places_list.dart    # list tile renderer
+    ├── image_input.dart    # camera trigger and photo preview box
+    ├── location_input.dart # GPS fetcher, map launcher, and Nominatim geocoder
+    └── places_list.dart    # list tiles showing photo thumbnail, title, and address
 ```
 
 ---
 
 ## Running the app
 
-Make sure Flutter is set up, then:
+Ensure Flutter is set up on your machine, then run:
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-The app targets Android, iOS, Windows, Linux, and web out of the box — whatever your Flutter setup supports.
-
-**Android/iOS only:** location and camera permissions are required at runtime. The OS will prompt for them when you first use those features.
+### Permissions
+- **Camera:** required when taking photos via `image_picker`.
+- **Location:** required when using the "Current Location" button.
+- The operating system will request these permissions at runtime when you first trigger those actions.
 
 ---
 
 ## Notes
 
-- Places are kept in memory only — there is no database or local storage wired up yet, so the list resets when you close the app.
-- Location coordinates are stored as raw lat/lng values. No reverse geocoding is done; the address string is just a formatted `lat / lng` label.
-- The map defaults to Google's campus (37.422, -122.084) as a fallback starting point when no location has been picked yet.
-- The app uses a dark purple theme throughout.
+- **Reverse Geocoding:** Reverse geocoding uses OpenStreetMap's Nominatim endpoint with a custom user-agent header. If offline or if the request fails, it falls back to raw coordinates.
+- **Map fallback:** If you open the map picker before any location is selected, it defaults to `(37.422, -122.084)`.
+- **Theme:** Dark purple theme configured globally in `main.dart`.
