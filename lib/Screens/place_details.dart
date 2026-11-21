@@ -1,5 +1,8 @@
 import 'package:favorite_places/Models/place.dart';
+import 'package:favorite_places/Screens/map.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class PlaceDetailsScreen extends StatelessWidget {
   const PlaceDetailsScreen({super.key, required this.place});
@@ -9,22 +12,16 @@ class PlaceDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Place Details')),
+      appBar: AppBar(title: Text(place.title)),
       body: Stack(
         children: [
-          // Add your place details UI here
+          // Full-screen place image
           Image.file(
             place.image,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
           ),
-          // Center(
-          //   child: Text(
-          //     'Place Details will be shown here.',
-          //     style: Theme.of(context).textTheme.titleMedium,
-          //   ),
-          // ),
         ],
       ),
     );
