@@ -32,18 +32,18 @@ class _LocationInputState extends State<LocationInput> {
     String formattedAddress =
         '${lat.toStringAsFixed(5)}, ${lng.toStringAsFixed(5)}';
 
-    try {
-      final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lng',
-      );
-      final response = await http.get(url, headers: {'User-Agent': _userAgent});
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['display_name'] != null) {
-          formattedAddress = data['display_name'] as String;
-        }
+    // try {
+    final url = Uri.parse(
+      'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lng',
+    );
+    final response = await http.get(url, headers: {'User-Agent': _userAgent});
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['display_name'] != null) {
+        formattedAddress = data['display_name'] as String;
       }
-    } catch (_) {}
+    }
+    // } catch (_) {}
 
     final newLocation = PlaceLocation(
       latitude: lat,
