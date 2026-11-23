@@ -63,18 +63,17 @@ class _LocationInputState extends State<LocationInput> {
     widget.onSelectLocation?.call(newLocation);
   }
 
-  void _getCurrentLocation() async {
+  Future<LocationData?> _getUserLocation() async {
     Location location = Location();
 
     bool serviceEnabled;
     PermissionStatus permissionGranted;
-    LocationData locationData;
 
     serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
-        return;
+        return null;
       }
     }
 
@@ -82,30 +81,65 @@ class _LocationInputState extends State<LocationInput> {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
-        return;
+        return null;
       }
     }
+
+    return await location.getLocation();
+  }
+
+  void _getCurrentLocation() async {
     setState(() {
       _isGettingLocation = true;
     });
 
-    locationData = await location.getLocation();
-    final lat = locationData.latitude;
-    final lng = locationData.longitude;
+    final locationData = await _getUserLocation();
 
-    _saveLocation(lat, lng);
+    if (locationData == null) {
+      setState(() {
+        _isGettingLocation = false;
+      });
+      return;
+    }
+
+    _saveLocation(locationData.latitude, locationData.longitude);
   }
 
   Future<void> _onSelectOnMap() async {
-    // Implement the logic to select a location on the map
+    PlaceLocation? targetLocation = _pickedLocation;
+
+    // If no location has been picked yet, request permission and fetch current GPS location first
+    if (targetLocation == null) {
+      setState(() {
+        _isGettingLocation = true;
+      });
+
+      final locationData = await _getUserLocation();
+
+      setState(() {
+        _isGettingLocation = false;
+      });
+
+      if (locationData != null) {
+        targetLocation = PlaceLocation(
+          latitude: locationData.latitude,
+          longitude: locationData.longitude,
+          address: '',
+        );
+      } else {
+        // Fallback only if permission is denied or location unavailable
+        targetLocation = PlaceLocation(
+          latitude: 37.422,
+          longitude: -122.084,
+          address: '',
+        );
+      }
+    }
+
+    if (!mounted) return;
+
     final pickedPoint = await Navigator.of(context).push<LatLng>(
-      MaterialPageRoute(
-        builder: (ctx) => MapScreen(
-          location:
-              _pickedLocation ??
-              PlaceLocation(latitude: 37.422, longitude: -122.084, address: ''),
-        ),
-      ),
+      MaterialPageRoute(builder: (ctx) => MapScreen(location: targetLocation!)),
     );
 
     if (pickedPoint == null) {

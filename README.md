@@ -98,5 +98,5 @@ flutter run
 ## Notes
 
 - **Reverse Geocoding:** Nominatim requires a user-agent header, which is passed on each request. If offline or if the request times out, it falls back to raw latitude/longitude coordinates.
-- **Map fallback:** Opening the map picker before any location is chosen defaults to `(37.422, -122.084)`.
+- **Map fallback:** Opening the map picker requests GPS permission and centers on your current location. If GPS is unavailable or permissions are denied, it defaults to `(37.422, -122.084)`.
 - **Theme:** Dark purple theme configured globally in `main.dart`.
