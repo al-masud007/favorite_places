@@ -16,9 +16,9 @@ Photos are moved out of the temporary cache into the app's permanent document di
 
 ## Screenshots
 
-| Add Place (Photo & Map Preview) | Map Location Picker | Place Details (Mini-Map & Address) |
-|:---:|:---:|:---:|
-| <img src="screenshots/add_place_screen.jpg" width="260" alt="Add Place Screen" /> | <img src="screenshots/map_picker.jpg" width="260" alt="Map Picker Screen" /> | <img src="screenshots/place_details.jpg" width="260" alt="Place Details Screen" /> |
+| Add Place (Initial) | Add Place (Filled) | Map Location Picker | Place Details |
+|:---:|:---:|:---:|:---:|
+| <img src="screenshots/add_place_initial.jpg" width="220" alt="Add Place Initial Screen" /> | <img src="screenshots/add_place_screen.jpg" width="220" alt="Add Place Filled Screen" /> | <img src="screenshots/map_picker.jpg" width="220" alt="Map Picker Screen" /> | <img src="screenshots/place_details.jpg" width="220" alt="Place Details Screen" /> |
 
 ---
 
